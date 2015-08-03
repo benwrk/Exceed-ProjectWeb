@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | OAZeeD EnviBot™</title>
+    <link rel="stylesheet" href="bootstrap-3.3.5-dist/css/bootstrap.min.css">
+    <style>
+        * {
+            font-family: "Segoe UI Light", "Helvetica Neue", "Ubuntu";
+        }
+        .top-bar-text h1 {
+            font-size: 20pt;
+            font-family: "Segoe UI Semibold";
+        }
+        .top-bar-text h2 {
+            font-size: 15pt;
+        }
+        .top-bar-text h3 {
+            font-size: 8pt;
+            font-family: "Segoe UI Semibold";
+            text-align: right
+        }
+        .top-bar-row {
+            background-color: #333333;
+            color: white;
+        }
+        #status-text {
+            font-size: 13pt;
+        }
+        .content-row {
+            background-color: #808080;
+            color: black;
+        }
+        .controls h1 {
+            font-size: 15pt;
+            font-family: "Segoe UI Semibold";
+        }
+        .params h1 {
+            font-size: 15pt;
+            font-family: "Segoe UI Semibold";
+        }
+        .params h2 {
+            font-size: 12pt;
+            font-family: "Segoe UI Semibold";
+        }
+        .content {
+            color: #DEDEDE;
+        }
+        .control-buttons-row {
+            text-align: center;
+        }
+        .control-btn {
+            margin-top: 2pt;
+            margin-bottom: 2pt;
+            margin-left: 1pt;
+            margin-right: 1pt;
+            width: 40pt;
+            height: 30pt;
+            text-align: center;
+        }
+/*
+        .params-values {
+            background-color: lightgreen;
+        }
+*/
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar-row row">
+            <div class="top-bar-text col-xs-6">
+                <h1>OAZeeD EnviBot™</h1><h2>Dashboard</h2>
+            </div>
+            <div class="top-bar-text col-xs-6">
+                <h3>STATUS<div id="status-text">Online</div></h3>
+            </div>
+        </div>
+        <div class="content-row row">
+            <div class="content col-xs-12">
+                <div class="controls col-xs-6">
+                    <h1>CONTROLS</h1>
+                    <div class="row control-buttons-row">
+                        <button id="control-hl-btn" class="control-btn btn btn-default">
+                            <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
+                        </button>
+                        <button id="control-up-btn" class="control-btn btn btn-default">
+                            <span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span>
+                        </button>
+                        <button id="control-hr-btn" class="control-btn btn btn-default">
+                            <span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="row control-buttons-row">
+                        <button id="control-lf-btn" class="control-btn btn btn-default">
+                            <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                        </button>
+                        <button id="control-o-btn" class="control-btn btn btn-warning">
+                            <span class="glyphicon glyphicon-asterisk" aria-hidden="true"></span>
+                        </button>
+                        <button id="control-rt-btn" class="control-btn btn btn-default">
+                            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <div class="row control-buttons-row">
+                        <button id="control-dn-btn" class="control-btn btn btn-default">
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="params col-xs-6">
+                    <h1>PARAMETERS</h1>
+                    <h2>Envi™ Controls</h2>
+                    <div class="col-xs-12">
+                        <div class="input-group">
+                            <span id="ind-ultra" class="input-group-addon params-values param-controls">Sonar</span>
+                            <input id="value-ultra" type="text" readonly class="form-control" placeholder="value" aria-describedby="basic-addon1">
+                            <span class="input-group-addon">cm</span>
+                        </div>
+                    </div>
+                    <br>
+                    <h2>Envi™ Sensors</h2>
+                    <div class="col-xs-12">
+                        <div class="input-group">
+                            <span id="ind-temp" class="input-group-addon params-values param-sensors">Temperature</span>
+                            <input id="value-temp" type="text" readonly class="form-control" placeholder="value" aria-describedby="basic-addon1">
+                            <span class="input-group-addon">C</span>
+                        </div>
+                        <div class="input-group">
+                            <span id="ind-gas" class="input-group-addon params-values param-sensors">Gas</span>
+                            <input id="value-gas" type="text" readonly class="form-control" placeholder="value" aria-describedby="basic-addon1">
+<!--  <span class="input-group-addon">PPM</span>-->
+                        </div>
+                        <div class="input-group">
+  <span id="ind-ir" class="input-group-addon params-values param-sensors">Fire/IR</span>
+  <input id="value-ir" type="text" readonly class="form-control" placeholder="value" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group">
+  <span id="ind-noise" class="input-group-addon params-values param-sensors">Noise</span>
+  <input id="value-noise" type="text" readonly class="form-control" placeholder="value" aria-describedby="basic-addon1">
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+    <script type="text/javascript">
+        // Use strict JS policy.
+        "use strict";
+        
+        // Movement and turn states.
+        var moveStates = {
+            IDLE: 0,
+            FORWARD: 1,
+            BACKWARD: 2
+        };
+        var turnStates = {
+            IDLE: 0,
+            LEFT: 1,
+            RIGHT: 2
+        };
+        var headStates = {
+            CENTER: 0,
+            LEFT: 1,
+            RIGHT: 2
+        }
+        var moveState = moveStates.IDLE;
+        var turnState = turnStates.IDLE;
+        var headState = headStates.CENTER;
+        
+        // Move.
+        var moveForward = function() {
+            moveState = moveStates.FORWARD;
+            postBoardData();
+        };
+        var moveBackward = function() {
+            moveState = moveStates.BACKWARD;
+            postBoardData();
+        };
+        var stopMovement = function() {
+            moveState = moveStates.IDLE;
+            postBoardData();
+        };
+        
+        // Turn.
+        var turnLeft = function() {
+            turnState = turnStates.LEFT;
+            postBoardData();
+        };
+        var turnRight = function() {
+            turnState = turnStates.RIGHT;
+            postBoardData();
+        };
+        var stopTurning = function() {
+            turnState = turnStates.IDLE;
+            postBoardData();
+        };
+        
+        // Head.
+        var turnHeadLeft = function() {
+            headState = headStates.LEFT;
+            postBoardData();
+        };
+        var turnHeadRight = function() {
+            headState = headStates.RIGHT;
+            postBoardData();
+        };
+        var turnHeadCenter = function() {
+            headState = headStates.CENTER;
+            postBoardData();
+        };
+        
+        // Listen to mouse events on control buttons.
+        $("#control-up-btn").mousedown(moveForward);
+        $("#control-up-btn").mouseup(stopMovement);        
+        $("#control-dn-btn").mousedown(moveBackward);
+        $("#control-dn-btn").mouseup(stopMovement);        
+        $("#control-lf-btn").mousedown(turnLeft);
+        $("#control-lf-btn").mouseup(stopTurning);        
+        $("#control-rt-btn").mousedown(turnRight);
+        $("#control-rt-btn").mouseup(stopTurning);
+        $("#control-hl-btn").mousedown(turnHeadLeft);
+        $("#control-hl-btn").mouseup(turnHeadCenter);
+        $("#control-hr-btn").mousedown(turnHeadRight);
+        $("#control-hr-btn").mouseup(turnHeadCenter);
+        
+        
+        // Listen to keyboard control events.
+        // Key down.
+        document.addEventListener('keydown', function(event) {
+            switch (event.keyIdentifier) {
+                case "U+0057":
+//                    console.log("up");
+                    moveForward();
+                    break;
+                case "U+0053":
+//                    console.log("down");
+                    moveBackward();
+                    break;
+                case "U+0041":
+//                    console.log("left");
+                    turnLeft();
+                    break;
+                case "U+0044":
+//                    console.log("right");
+                    turnRight();
+                    break;
+                case "U+0051":
+                    turnHeadLeft();
+                    break;
+                case "U+0045":
+                    turnHeadRight();
+                    break;
+            }
+//            console.log("dn");
+        });
+        
+        // Key up.
+        document.addEventListener('keyup', function(event) {
+            switch (event.keyIdentifier) {
+                case "U+0057":
+//                    console.log("up");
+                    stopMovement();
+                    break;
+                case "U+0053":
+//                    console.log("down");
+                    stopMovement();
+                    break;
+                case "U+0041":
+//                    console.log("left");
+                    stopTurning();
+                    break;
+                case "U+0044":
+//                    console.log("right");
+                    stopTurning();
+                    break;
+                case "U+0051":
+                    turnHeadCenter();
+                    break;
+                case "U+0045":
+                    turnHeadCenter();
+                    break;
+            }
+//            console.log("up");
+//            console.log(event.keyIdentifier);
+        });
+        
+        // Post data to IoT Service.
+        var lastPostData = "";
+        var postBoardData = function() {
+            var postData = "EnviBotCTRL_MV[" + moveState + "]_TN[" + turnState + "]_HD[" + headState + "]" + "_!EndCTRL";
+            if (postData != lastPostData) {
+                setStatusText("Sending controls");
+                $.post("http://exceed.cupco.de/iot/OAZeeD/toBoard", {data: postData}, function(success) {
+                    if (success) {
+                        setStatusText("Online")
+                        console.log("postBoardData(): Control command \"" + postData + "\" posted to IoT Service successfully.");
+                    } else {
+                        setStatusText("Error sending controls");
+                    }
+//                    console.log(success);
+                });
+                lastPostData = postData;
+            }
+        };
+        
+        var gasValue = 0;
+        var ultraValue = 0;
+        var irValue = 0;
+        var noiseValue = 0;
+        var tempValue = 0;
+        
+        // Poll board data from IoT Service.
+        var lastRawBoardData = "";
+        var rawBoardData = "";
+        var boardDataArray;
+        var pullAndParseBoardData = function() {
+            setStatusText("Syncing");
+            $.get("http://exceed.cupco.de/iot/OAZeeD/fromBoard", function(pulledData) {
+                rawBoardData = pulledData;
+                setStatusText("Online");
+                console.log("pullAndParseBoardData(): \"" + rawBoardData + "\" <- raw board data successfully pulled from IoT Service.");
+            });
+            if (rawBoardData != lastRawBoardData) {
+                // TODO: PUT BOARD DATA PARSERS HERE!
+                boardDataArray = rawBoardData.split("_");
+                gasValue = parseInt(boardDataArray[1].replace("GAS", "").replace("[", "").replace("]", ""), 10);
+                irValue = parseInt(boardDataArray[2].replace("IR", "").replace("[", "").replace("]", ""), 10);
+                ultraValue = parseInt(boardDataArray[3].replace("UT", "").replace("[", "").replace("]", ""), 10);
+                tempValue = parseInt(boardDataArray[4].replace("TM", "").replace("[", "").replace("]", ""), 10);
+                noiseValue = parseInt(boardDataArray[5].replace("MIC", "").replace("[", "").replace("]", ""), 10);
+//                console.log(gasValue);
+//                console.log("ir: " + irValue);
+//                console.log("ultra: " + ultraValue);
+                updateUIParams();
+                lastRawBoardData = rawBoardData;
+            }
+        };
+        
+        // Interval keeper for continuous syncing of data from board.
+        var boardDataUpdater;
+        // Stop updating data from board.
+        var stopBoardDataUpdater = function() {
+            clearInterval(boardDataUpdater);
+        };
+        // Start updating data from board.
+        var startBoardDataUpdater = function() {
+            setInterval(pullAndParseBoardData, 2000);
+        };
+        // Initialization when page finished loading.
+        $(document).ready(startBoardDataUpdater);
+        
+        var updateUIParams = function() {
+            $("#value-gas").val(gasValue);
+            $("#value-ir").val(irValue);
+            $("#value-ultra").val(ultraValue);
+            $("#value-temp").val(tempValue);
+            $("#value-noise").val(noiseValue);
+            // gas > 500
+            // ir < 100
+            // sonar < 20
+            if (gasValue > 500) {
+                $("#ind-gas").css("background-color", "lightpink");
+                $("#value-gas").css("color", "red");
+            } else {
+                $("#ind-gas").css("background-color", "lightgreen");
+                $("#value-gas").css("color", "black");
+            }
+            if (irValue < 100) {
+                $("#ind-ir").css("background-color", "lightpink");
+                $("#value-ir").css("color", "red");
+            } else {
+                $("#ind-ir").css("background-color", "lightgreen");
+                $("#value-ir").css("color", "black");
+            }
+            if (ultraValue < 30 && ultraValue > 5) {
+                $("#ind-ultra").css("background-color", "lightpink");
+                $("#value-ultra").css("color", "red");
+            } else {
+                $("#ind-ultra").css("background-color", "lightgreen");
+                $("#value-ultra").css("color", "black");
+            }
+            if (tempValue > 45 || tempValue < 10) {
+                $("#ind-temp").css("background-color", "lightpink");
+                $("#value-temp").css("color", "red");
+            } else {
+                $("#ind-temp").css("background-color", "lightgreen");
+                $("#value-temp").css("color", "black");
+            }
+            if (noiseValue > 400) {
+                $("#ind-noise").css("background-color", "lightpink");
+                $("#value-noise").css("color", "red");
+            } else {
+                $("#ind-noise").css("background-color", "lightgreen");
+                $("#value-noise").css("color", "black");
+            }
+        };
+        // Changing status text.
+        var setStatusText = function(text) {
+            $("#status-text").text(text);
+            if (text == "Online") {
+                $("#status-text").css("color", "lawngreen");
+            } else if (text.toLowerCase().indexOf("error") != -1) {
+                $("#status-text").css("color", "red");
+            } else {
+                $("#status-text").css("color", "white");
+            }
+        };
+    </script>
+</body>
+</html>
