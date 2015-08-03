@@ -72,13 +72,14 @@
                 <h1>OAZeeD EnviBot™</h1><h2>Dashboard</h2>
             </div>
             <div class="top-bar-text col-xs-6">
-                <h3>STATUS<div id="status-text">Online</div></h3>
+                <h3>CONNECTION STATUS<div id="status-text">Online</div></h3>
             </div>
         </div>
         <div class="content-row row">
             <div class="content col-xs-12">
                 <div class="controls col-xs-6">
                     <h1>CONTROLS</h1>
+                    <br><br><br>
                     <div class="row control-buttons-row">
                         <button id="control-hl-btn" class="control-btn btn btn-default">
                             <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
@@ -172,42 +173,54 @@
         // Move.
         var moveForward = function() {
             moveState = moveStates.FORWARD;
+            $("#control-up-btn").addClass("btn-success");
             postBoardData();
         };
         var moveBackward = function() {
             moveState = moveStates.BACKWARD;
+            $("#control-dn-btn").addClass("btn-success");
             postBoardData();
         };
         var stopMovement = function() {
             moveState = moveStates.IDLE;
+            $("#control-up-btn").removeClass("btn-success");
+            $("#control-dn-btn").removeClass("btn-success");
             postBoardData();
         };
         
         // Turn.
         var turnLeft = function() {
             turnState = turnStates.LEFT;
+            $("#control-lf-btn").addClass("btn-success");
             postBoardData();
         };
         var turnRight = function() {
             turnState = turnStates.RIGHT;
+            $("#control-rt-btn").addClass("btn-success");
             postBoardData();
         };
         var stopTurning = function() {
             turnState = turnStates.IDLE;
+            $("#control-rt-btn").removeClass("btn-success");
+            $("#control-lf-btn").removeClass("btn-success");
             postBoardData();
         };
         
         // Head.
         var turnHeadLeft = function() {
             headState = headStates.LEFT;
+            $("#control-hl-btn").addClass("btn-success");
             postBoardData();
         };
         var turnHeadRight = function() {
             headState = headStates.RIGHT;
+            $("#control-hr-btn").addClass("btn-success");
             postBoardData();
         };
         var turnHeadCenter = function() {
             headState = headStates.CENTER;
+            $("#control-hl-btn").removeClass("btn-success");
+            $("#control-hr-btn").removeClass("btn-success");
             postBoardData();
         };
         
@@ -229,58 +242,107 @@
         // Listen to keyboard control events.
         // Key down.
         document.addEventListener('keydown', function(event) {
-            switch (event.keyIdentifier) {
-                case "U+0057":
-//                    console.log("up");
-                    moveForward();
-                    break;
-                case "U+0053":
-//                    console.log("down");
-                    moveBackward();
-                    break;
-                case "U+0041":
-//                    console.log("left");
-                    turnLeft();
-                    break;
-                case "U+0044":
-//                    console.log("right");
-                    turnRight();
-                    break;
-                case "U+0051":
-                    turnHeadLeft();
-                    break;
-                case "U+0045":
-                    turnHeadRight();
-                    break;
+//            console.log(event.keyIdentifier);
+            if (event.keyIdentifier != undefined) {
+                switch (event.keyIdentifier) {
+                    case "U+0057":
+    //                    console.log("up");
+                        moveForward();
+                        break;
+                    case "U+0053":
+    //                    console.log("down");
+                        moveBackward();
+                        break;
+                    case "U+0041":
+    //                    console.log("left");
+                        turnLeft();
+                        break;
+                    case "U+0044":
+    //                    console.log("right");
+                        turnRight();
+                        break;
+                    case "U+0051":
+                        turnHeadLeft();
+                        break;
+                    case "U+0045":
+                        turnHeadRight();
+                        break;
+                }
+            } else {
+                switch (event.key) {
+                    case "w":
+                        moveForward();
+                        break;
+                    case "s":
+                        moveBackward();
+                        break;
+                    case "a":
+                        turnLeft();
+                        break;
+                    case "d":
+                        turnRight();
+                        break;
+                    case "q":
+                        turnHeadLeft();
+                        break;
+                    case "e":
+                        turnHeadRight();
+                        break;
+                }
             }
 //            console.log("dn");
         });
         
         // Key up.
         document.addEventListener('keyup', function(event) {
-            switch (event.keyIdentifier) {
-                case "U+0057":
-//                    console.log("up");
-                    stopMovement();
-                    break;
-                case "U+0053":
-//                    console.log("down");
-                    stopMovement();
-                    break;
-                case "U+0041":
-//                    console.log("left");
-                    stopTurning();
-                    break;
-                case "U+0044":
-//                    console.log("right");
-                    stopTurning();
-                    break;
-                case "U+0051":
-                    turnHeadCenter();
-                    break;
-                case "U+0045":
-                    turnHeadCenter();
-                    break;
+            if (event.keyIdentifier != undefined) {
+//                console.log('do');
+                switch (event.keyIdentifier) {
+                    case "U+0057":
+    //                    console.log("up");
+                        stopMovement();
+                        break;
+                    case "U+0053":
+    //                    console.log("down");
+                        stopMovement();
+                        break;
+                    case "U+0041":
+    //                    console.log("left");
+                        stopTurning();
+                        break;
+                    case "U+0044":
+    //                    console.log("right");
+                        stopTurning();
+                        break;
+                    case "U+0051":
+                        turnHeadCenter();
+                        break;
+                    case "U+0045":
+                        turnHeadCenter();
+                        break;
+                }
+            } else {
+//                console.log('dodo');
+                switch (event.key) {
+                    case "w":
+                        stopMovement();
+                        break;
+                    case "s":
+                        stopMovement();
+                        break;
+                    case "a":
+                        stopTurning();
+                        break;
+                    case "d":
+                        stopTurning();
+                        break;
+                    case "q":
+                        turnHeadCenter();
+                        break;
+                    case "e":
+                        turnHeadCenter();
+                        break;
+                }
             }
 //            console.log("up");
 //            console.log(event.keyIdentifier);
