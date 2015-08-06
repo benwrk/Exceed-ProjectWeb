@@ -18,7 +18,7 @@
         .top-bar-text h3 {
             font-size: 8pt;
             font-family: "Segoe UI Semibold";
-            text-align: right
+            text-align: right;
         }
         .top-bar-row {
             background-color: #333333;
@@ -58,11 +58,6 @@
             height: 30pt;
             text-align: center;
         }
-/*
-        .params-values {
-            background-color: lightgreen;
-        }
-*/
     </style>
 </head>
 <body>
@@ -129,7 +124,6 @@
                         <div class="input-group">
                             <span id="ind-gas" class="input-group-addon params-values param-sensors">Gas</span>
                             <input id="value-gas" type="text" readonly class="form-control" placeholder="value" aria-describedby="basic-addon1">
-<!--  <span class="input-group-addon">PPM</span>-->
                         </div>
                         <div class="input-group">
   <span id="ind-ir" class="input-group-addon params-values param-sensors">Fire/IR</span>
@@ -161,11 +155,13 @@
             LEFT: 1,
             RIGHT: 2
         };
+        
+        // Head position states.
         var headStates = {
             CENTER: 0,
             LEFT: 1,
             RIGHT: 2
-        }
+        };
         var moveState = moveStates.IDLE;
         var turnState = turnStates.IDLE;
         var headState = headStates.CENTER;
@@ -241,24 +237,20 @@
         
         // Listen to keyboard control events.
         // Key down.
-        document.addEventListener('keydown', function(event) {
-//            console.log(event.keyIdentifier);
+        document.addEventListener('keydown', function(event) {            
             if (event.keyIdentifier != undefined) {
+                // Chrome.
                 switch (event.keyIdentifier) {
                     case "U+0057":
-    //                    console.log("up");
                         moveForward();
                         break;
                     case "U+0053":
-    //                    console.log("down");
                         moveBackward();
                         break;
                     case "U+0041":
-    //                    console.log("left");
                         turnLeft();
                         break;
                     case "U+0044":
-    //                    console.log("right");
                         turnRight();
                         break;
                     case "U+0051":
@@ -269,6 +261,7 @@
                         break;
                 }
             } else {
+                // Internet Explorer / MS-Edge.
                 switch (event.key) {
                     case "w":
                         moveForward();
@@ -290,28 +283,23 @@
                         break;
                 }
             }
-//            console.log("dn");
         });
         
         // Key up.
         document.addEventListener('keyup', function(event) {
             if (event.keyIdentifier != undefined) {
-//                console.log('do');
+                // Chrome.
                 switch (event.keyIdentifier) {
                     case "U+0057":
-    //                    console.log("up");
                         stopMovement();
                         break;
                     case "U+0053":
-    //                    console.log("down");
                         stopMovement();
                         break;
                     case "U+0041":
-    //                    console.log("left");
                         stopTurning();
                         break;
                     case "U+0044":
-    //                    console.log("right");
                         stopTurning();
                         break;
                     case "U+0051":
@@ -322,7 +310,7 @@
                         break;
                 }
             } else {
-//                console.log('dodo');
+                // Internet Explorer / MS-Edge.
                 switch (event.key) {
                     case "w":
                         stopMovement();
@@ -344,8 +332,6 @@
                         break;
                 }
             }
-//            console.log("up");
-//            console.log(event.keyIdentifier);
         });
         
         // Post data to IoT Service.
@@ -361,7 +347,6 @@
                     } else {
                         setStatusText("Error sending controls");
                     }
-//                    console.log(success);
                 });
                 lastPostData = postData;
             }
@@ -385,16 +370,15 @@
                 console.log("pullAndParseBoardData(): \"" + rawBoardData + "\" <- raw board data successfully pulled from IoT Service.");
             });
             if (rawBoardData != lastRawBoardData) {
-                // TODO: PUT BOARD DATA PARSERS HERE!
+                // Board data parsers.
                 boardDataArray = rawBoardData.split("_");
                 gasValue = parseInt(boardDataArray[1].replace("GAS", "").replace("[", "").replace("]", ""), 10);
                 irValue = parseInt(boardDataArray[2].replace("IR", "").replace("[", "").replace("]", ""), 10);
                 ultraValue = parseInt(boardDataArray[3].replace("UT", "").replace("[", "").replace("]", ""), 10);
                 tempValue = parseInt(boardDataArray[4].replace("TM", "").replace("[", "").replace("]", ""), 10);
                 noiseValue = parseInt(boardDataArray[5].replace("MIC", "").replace("[", "").replace("]", ""), 10);
-//                console.log(gasValue);
-//                console.log("ir: " + irValue);
-//                console.log("ultra: " + ultraValue);
+                // End board data parsers;
+                
                 updateUIParams();
                 lastRawBoardData = rawBoardData;
             }
@@ -408,20 +392,20 @@
         };
         // Start updating data from board.
         var startBoardDataUpdater = function() {
-            setInterval(pullAndParseBoardData, 2000);
+            boardDataUpdater = setInterval(pullAndParseBoardData, 2000);
         };
         // Initialization when page finished loading.
         $(document).ready(startBoardDataUpdater);
         
+        // Update WebUI parameters.
         var updateUIParams = function() {
             $("#value-gas").val(gasValue);
             $("#value-ir").val(irValue);
             $("#value-ultra").val(ultraValue);
             $("#value-temp").val(tempValue);
             $("#value-noise").val(noiseValue);
-            // gas > 500
-            // ir < 100
-            // sonar < 20
+            
+            // WebUI visual alerts.
             if (gasValue > 500) {
                 $("#ind-gas").css("background-color", "lightpink");
                 $("#value-gas").css("color", "red");
@@ -458,6 +442,7 @@
                 $("#value-noise").css("color", "black");
             }
         };
+        
         // Changing status text.
         var setStatusText = function(text) {
             $("#status-text").text(text);
