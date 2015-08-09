@@ -178,6 +178,8 @@
             LEFT: 1,
             RIGHT: 2
         };
+        
+        // State containers and initial states.
         var moveState = moveStates.IDLE;
         var turnState = turnStates.IDLE;
         var headState = headStates.CENTER;
@@ -368,6 +370,7 @@
             }
         };
         
+        // Containers for values from EnviBot.
         var gasValue = 0;
         var ultraValue = 0;
         var irValue = 0;
@@ -386,8 +389,9 @@
                 console.log("pullAndParseBoardData(): \"" + rawBoardData + "\" <- raw board data successfully pulled from IoT Service.");
             });
             if (rawBoardData != lastRawBoardData) {
-                // Board data parsers.
                 boardDataArray = rawBoardData.split("_");
+                
+                // Board data parsers.
                 gasValue = parseInt(boardDataArray[1].replace("GAS", "").replace("[", "").replace("]", ""), 10);
                 irValue = parseInt(boardDataArray[2].replace("IR", "").replace("[", "").replace("]", ""), 10);
                 ultraValue = parseInt(boardDataArray[3].replace("UT", "").replace("[", "").replace("]", ""), 10);
@@ -421,7 +425,7 @@
             $("#value-temp").val(tempValue);
             $("#value-noise").val(noiseValue);
             
-            // WebUI visual alerts.
+            // WebUI visual alerts and border values.
             if (gasValue > 500) {
                 $("#ind-gas").css("background-color", "lightpink");
                 $("#value-gas").css("color", "red");
@@ -459,7 +463,7 @@
             }
         };
         
-        // Changing status text.
+        // Change status text.
         var setStatusText = function(text) {
             $("#status-text").text(text);
             if (text == "Online") {
